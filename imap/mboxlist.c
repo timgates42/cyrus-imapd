@@ -2427,7 +2427,6 @@ EXPORTED int mboxlist_renamemailbox(const mbentry_t *mbentry,
         if (r) goto done;
         newmbentry = mboxlist_entry_copy(mbentry);
         free(newmbentry->name);
-        newmbentry->mbtype &= ~MBTYPE_LEGACY_DIRS;
         newmbentry->name = xstrdupnull(newname);
         if (!silent) {
             newmbentry->foldermodseq = mboxname_nextmodseq(newname, newmbentry->foldermodseq,
@@ -2499,7 +2498,7 @@ EXPORTED int mboxlist_renamemailbox(const mbentry_t *mbentry,
         r = mailbox_copy_files(oldmailbox, newpartition, newname, oldmailbox->uniqueid);
         if (r) goto done;
         newmbentry = mboxlist_entry_create();
-        newmbentry->mbtype = oldmailbox->mbtype & ~MBTYPE_LEGACY_DIRS;
+        newmbentry->mbtype = oldmailbox->mbtype;
         newmbentry->partition = xstrdupnull(newpartition);
         newmbentry->acl = xstrdupnull(oldmailbox->acl);
         newmbentry->uidvalidity = oldmailbox->i.uidvalidity;
@@ -2588,7 +2587,7 @@ EXPORTED int mboxlist_renamemailbox(const mbentry_t *mbentry,
         /* rewrite entry with new name */
         newmbentry = mboxlist_entry_create();
         newmbentry->name = xstrdupnull(newname);
-        newmbentry->mbtype = oldmailbox->mbtype & ~MBTYPE_LEGACY_DIRS;
+        newmbentry->mbtype = oldmailbox->mbtype;
         newmbentry->partition = xstrdupnull(oldmailbox->part);
         newmbentry->acl = xstrdupnull(oldmailbox->acl);
         newmbentry->uidvalidity = oldmailbox->i.uidvalidity;
