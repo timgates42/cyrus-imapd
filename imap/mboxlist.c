@@ -1629,7 +1629,7 @@ static int mboxlist_createmailbox_full(const char *mboxname, int mbtype,
     char *acl = NULL;
     struct mailbox *newmailbox = NULL;
     int isremote = mbtype & MBTYPE_REMOTE;
-    mbentry_t *newmbentry = NULL;
+    mbentry_t *parent = NULL, *newmbentry = NULL;
 
     r = mboxlist_create_namecheck(mboxname, userid, auth_state,
                                   isadmin, forceuser);
@@ -1647,6 +1647,12 @@ static int mboxlist_createmailbox_full(const char *mboxname, int mbtype,
 
     r = mboxlist_create_partition(mboxname, partition, &newpartition);
     if (r) goto done;
+
+    r = mboxlist_findparent(mboxname, &parent);
+    if (!r) {
+        mbtype |= (parent->mbtype & MBTYPE_LEGACY_DIRS);
+    }
+    else if (r != IMAP_MAILBOX_NONEXISTENT) goto done;
 
     if (!dbonly && !isremote) {
         /* Filesystem Operations */
@@ -1708,6 +1714,7 @@ done:
     free(acl);
     free(newpartition);
     mboxlist_entry_free(&newmbentry);
+    mboxlist_entry_free(&parent);
 
     return r;
 }
