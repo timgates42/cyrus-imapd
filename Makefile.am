@@ -1531,6 +1531,7 @@ lib_libcyrus_min_la_SOURCES = \
 	lib/hashu64.c \
 	lib/libconfig.c \
 	lib/mpool.c \
+	lib/ptrarray.c \
 	lib/retry.c \
 	lib/strarray.c \
 	lib/strhash.c \
