@@ -64,6 +64,7 @@ static ptrarray_t heldlocks = PTRARRAY_INITIALIZER;
 
 static void printlocks(void)
 {
+    if (ptrarray_size(&heldlocks) < 2) return;
     struct buf buf = BUF_INITIALIZER;
     int i;
     for (i = 0; i < ptrarray_size(&heldlocks); i++) {
