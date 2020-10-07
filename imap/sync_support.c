@@ -7619,6 +7619,8 @@ sync_rightnow_timeout(struct protstream *s __attribute__((unused)),
 
 EXPORTED int sync_checkpoint(struct protstream *clientin)
 {
+    clearlocks();
+
     struct buf *buf = sync_log_rightnow_buf();
     if (!buf) return 0;
 
@@ -7658,6 +7660,8 @@ EXPORTED int sync_checkpoint(struct protstream *clientin)
 
     // mark these items consumed!
     buf_reset(buf);
+
+    clearlocks();
 
     return 0;
 }

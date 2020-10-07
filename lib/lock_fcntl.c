@@ -111,6 +111,8 @@ EXPORTED void clearlocks(void)
     int i;
     for (i = 0; i < ptrarray_size(&heldlocks); i++) {
         struct lockitem_struct *item = ptrarray_nth(&heldlocks, i);
+        syslog(LOG_ERR, "LOCKCLEAR: forgetting %d=<%c:%d:%s>",
+               i, item->ex, item->fd, item->filename);
         free(item->filename);
         free(item);
     }
