@@ -106,6 +106,16 @@ static void rmlock(const char *filename, int fd)
 
 }
 
+EXPORTED void clearlocks(void)
+{
+    int i;
+    for (i = 0; i < ptrarray_size(&heldlocks); i++) {
+        struct lockitem_struct *item = ptrarray_nth(&heldlocks, i);
+        free(item->filename);
+        free(item);
+    }
+    ptrarray_truncate(&heldlocks, 0);
+}
 
 EXPORTED const char lock_method_desc[] = "fcntl";
 
