@@ -80,6 +80,7 @@
 #include "xstrlcat.h"
 #include "strarray.h"
 #include "ptrarray.h"
+#include "cyr_lock.h"
 
 #ifdef USE_CALALARMD
 #include "caldav_alarm.h"
