@@ -1557,7 +1557,7 @@ static int jmap_emailsubmission_changes(jmap_req_t *req)
     if (r == IMAP_MAILBOX_NONEXISTENT) {
         mboxlist_entry_free(&mbentry);
         r = 0;
-        changes.new_modseq = jmap_highestmodseq(req, MBTYPE_SUBMISSION);
+        changes.new_modseq = jmap_highestmodseq(req, MBTYPE_JMAPSUBMIT);
         jmap_ok(req, jmap_changes_reply(&changes));
         goto done;
     }
@@ -1980,7 +1980,7 @@ static int jmap_emailsubmission_query(jmap_req_t *req)
         mboxlist_entry_free(&mbentry);
         r = 0;
         /* Build response */
-        json_t *jstate = jmap_getstate(req, MBTYPE_SUBMISSION, /*refresh*/ created);
+        json_t *jstate = jmap_getstate(req, MBTYPE_JMAPSUBMIT, /*refresh*/ created);
         query.query_state = xstrdup(json_string_value(jstate));
         json_decref(jstate);
         query.result_position = 0;
