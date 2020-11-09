@@ -51,6 +51,7 @@
 #include "ptrarray.h"
 #include "util.h"
 
+#include <dlfcn.h>
 #include <syslog.h>
 #include <time.h>
 
@@ -105,6 +106,30 @@ static void rmlock(const char *filename, int fd)
     syslog(LOG_ERR, "LOCKERROR: missing %d:%s", fd, filename);
 
 }
+
+EXPORTED int close(int fd)
+{
+    int i;
+    static int (* fptr)() = 0;
+    if (!fptr) {
+        fptr = (int (*)())dlsym(RTLD_NEXT, "close");
+    }
+
+    for (i = 0; i < ptrarray_size(&heldlocks); i++) {
+        struct lockitem_struct *item = ptrarray_nth(&heldlocks, i);
+        if (item->fd != fd) continue;
+        syslog(LOG_NOTICE, "LOCKNOTICE: removed by close %d", fd);
+        ptrarray_remove(&heldlocks, i);
+        if (i < ptrarray_size(&heldlocks))
+            syslog(LOG_ERR, "LOCKERROR: remove out of order %d=<%c:%d:%s>",
+                   i, item->ex, item->fd, item->filename);
+        free(item->filename);
+        free(item);
+    }
+
+    return ((*fptr)(fd));
+}
+
 
 EXPORTED void clearlocks(void)
 {
